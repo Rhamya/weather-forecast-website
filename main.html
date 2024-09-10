@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Weather Forecast</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('i.jpg');
+            background-repeat: no-repeat;
+            background-size:cover;
+
+        }
+        .card {
+            width: 80%;
+            max-width: 400px;
+            margin: 80px auto 0;
+            border-radius: 20px;
+            padding: 40px 35px;
+            text-align: center;
+            background-color: rgba(246, 212, 212, 0.2);
+            color: rgb(0, 0, 0);
+           border: 2px solid black;
+            
+        }
+        .search {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .search input {
+            border-radius: 10px;
+            padding: 5px;
+            height: 35px;
+            margin-right: 16px;
+            font-size: 18px;
+            flex: 1;
+        }
+        .search button {
+            width: 50px;
+            height: 50px;
+            padding: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            outline: 0; 
+        }
+        .weather-icon {
+            width: 150px;
+            margin-top: 30px;
+        }
+        .details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .col p {
+            
+            font-weight: 900;
+        }
+        .humidity, .wind {
+            
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: rgb(0, 0, 0);">WEATHER FORECAST WEBSITE</h1>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" class="search-bar">
+            <button class="search-button"><i class="fa fa-search"></i></button>
+        </div>
+
+        <img src="" class="weather-icon" id="weather-icon">
+
+        <div class="weather">
+            <h1 class="temperature" style="font-size: 40px;"></h1>
+            <h2 class="city" style="font-size: 30px;"></h2>
+            <h3 class="description" style="font-size: 25px;"></h3>
+            <div class="details">
+                <div class="col">
+                    <p class="humidity" style="font-size: 30px;"></p>
+                    <p style="font-size: 25px;">Humidity</p>
+                </div>
+                <div class="col">
+                    <p class="wind" style="font-size: 30px;"></p>                
+                    <p style="font-size: 25px;">Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var inputval = document.querySelector('.search-bar');
+        var btn = document.querySelector('.search-button');
+        var city = document.querySelector('.city');
+        var description = document.querySelector('.description');
+        var temp = document.querySelector('.temperature');
+        var wind = document.querySelector('.wind');
+        var humidity = document.querySelector('.humidity');
+        var weatherIcon = document.querySelector('#weather-icon');
+        var apik = "d903ad59c87b683ee11067d9553d1ee3";
+
+        function convertion(val) {
+            return (val - 273.15).toFixed(2);
+        }
+
+        function fetchWeather(cityName) {
+            fetch('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + apik)
+            .then(res => res.json())
+            .then(data => {
+                var nameval = data['name'];
+                var descrip = data['weather'][0]['description'];
+                var tempature = data['main']['temp'];
+                var wndspd = data['wind']['speed'];
+                var humid = data['main']['humidity'];
+                var icon = data['weather'][0]['icon'];
+
+                city.innerHTML = `<span>${nameval}<span>`;
+                temp.innerHTML = ` <span>${ convertion(tempature)} °C</span>`;
+                description.innerHTML = ` <span>${descrip}<span>`;
+                wind.innerHTML = `<span>${wndspd} km/h<span>`;
+                humidity.innerHTML = ` <span>${humid}%<span>`;
+                weatherIcon.src = `http://openweathermap.org/img/wn/${icon}@2x.png`;
+            })
+            .catch(err => alert('City not found or invalid API key'));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchWeather('Chennai');
+        });
+
+        btn.addEventListener('click', function() {
+            fetchWeather(inputval.value);
+        });
+
+    </script>
+</body>
+</html>
